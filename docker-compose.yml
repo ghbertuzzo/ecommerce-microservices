@@ -1,0 +1,96 @@
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  postgres_checkout:
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: checkout
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - checkout_data:/var/lib/postgresql/data
+
+  postgres_payments:
+    image: postgres:16
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: payments
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - payments_data:/var/lib/postgresql/data
+
+  postgres_expedition:
+    image: postgres:16
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: expedition
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - expedition_data:/var/lib/postgresql/data
+
+  checkout:
+    build:
+      context: ./checkout
+    ports:
+      - "3001:3000"
+    depends_on:
+      - rabbitmq
+      - postgres_checkout
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      DATABASE_URL: postgres://user:pass@postgres_checkout:5432/checkout
+
+  payments:
+    build:
+      context: ./payments
+    ports:
+      - "3002:3000"
+    depends_on:
+      - rabbitmq
+      - postgres_payments
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      DATABASE_URL: postgres://user:pass@postgres_payments:5432/payments
+
+  expedition:
+    build:
+      context: ./expedition
+    ports:
+      - "3003:3000"
+    depends_on:
+      - rabbitmq
+      - postgres_expedition
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      DATABASE_URL: postgres://user:pass@postgres_expedition:5432/expedition
+
+  bff:
+    build:
+      context: ./bff
+    ports:
+      - "3000:3000"
+    depends_on:
+      - checkout
+      - payments
+      - expedition
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+
+volumes:
+  checkout_data:
+  payments_data:
+  expedition_data:
