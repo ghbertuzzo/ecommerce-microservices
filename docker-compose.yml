@@ -5,18 +5,22 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    env_file:
+      - .env.dev
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
 
   postgres_checkout:
     image: postgres:16
     ports:
       - "5433:5432"
+    env_file:
+      - .env.dev
     environment:
-      POSTGRES_DB: checkout
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: ${POSTGRES_CHECKOUT_DB}
+      POSTGRES_USER: ${POSTGRES_CHECKOUT_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_CHECKOUT_PASSWORD}
     volumes:
       - checkout_data:/var/lib/postgresql/data
 
@@ -24,10 +28,12 @@ services:
     image: postgres:16
     ports:
       - "5434:5432"
+    env_file:
+      - .env.dev
     environment:
-      POSTGRES_DB: payments
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: ${POSTGRES_PAYMENTS_DB}
+      POSTGRES_USER: ${POSTGRES_PAYMENTS_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PAYMENTS_PASSWORD}
     volumes:
       - payments_data:/var/lib/postgresql/data
 
@@ -35,10 +41,12 @@ services:
     image: postgres:16
     ports:
       - "5435:5432"
+    env_file:
+      - .env.dev
     environment:
-      POSTGRES_DB: expedition
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: ${POSTGRES_EXPEDITION_DB}
+      POSTGRES_USER: ${POSTGRES_EXPEDITION_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_EXPEDITION_PASSWORD}
     volumes:
       - expedition_data:/var/lib/postgresql/data
 
@@ -50,9 +58,11 @@ services:
     depends_on:
       - rabbitmq
       - postgres_checkout
+    env_file:
+      - .env.dev
     environment:
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      DATABASE_URL: postgres://user:pass@postgres_checkout:5432/checkout
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      DATABASE_URL: ${POSTGRES_CHECKOUT_URL}
 
   payments:
     build:
@@ -62,9 +72,11 @@ services:
     depends_on:
       - rabbitmq
       - postgres_payments
+    env_file:
+      - .env.dev
     environment:
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      DATABASE_URL: postgres://user:pass@postgres_payments:5432/payments
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      DATABASE_URL: ${POSTGRES_PAYMENTS_URL}
 
   expedition:
     build:
@@ -74,9 +86,11 @@ services:
     depends_on:
       - rabbitmq
       - postgres_expedition
+    env_file:
+      - .env.dev
     environment:
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      DATABASE_URL: postgres://user:pass@postgres_expedition:5432/expedition
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      DATABASE_URL: ${POSTGRES_EXPEDITION_URL}
 
   bff:
     build:
@@ -87,8 +101,10 @@ services:
       - checkout
       - payments
       - expedition
+    env_file:
+      - .env.dev
     environment:
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      RABBITMQ_URL: ${RABBITMQ_URL}
 
 volumes:
   checkout_data:
