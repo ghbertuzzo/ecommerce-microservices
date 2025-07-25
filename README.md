@@ -28,7 +28,7 @@ Este projeto implementa uma arquitetura de microsserviços com **NestJS**, utili
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/ecommerce-microservices.git
+git clone https://github.com/ghbertuzzo/ecommerce-microservices.git
 cd ecommerce-microservices
 ```
 
