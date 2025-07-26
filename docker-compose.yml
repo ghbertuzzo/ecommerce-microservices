@@ -98,9 +98,15 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - checkout
-      - payments
-      - expedition
+      checkout:
+        condition: service_started
+        required: true
+      expedition:
+        condition: service_started
+        required: true
+      payments:
+        condition: service_started
+        required: true
     env_file:
       - .env.dev
     environment:
