@@ -1,22 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { CHECKOUT_QUEUE } from './shared/constants';
+import { MicroserviceOptions } from '@nestjs/microservices';
 import { Logger } from '@nestjs/common';
+import { getRabbitMQOptions } from './shared/rabbitmq.config';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
-    {
-      transport: Transport.RMQ,
-      options: {
-        urls: [process.env.RABBITMQ_URL!],
-        queue: CHECKOUT_QUEUE,
-        queueOptions: {
-          durable: true,
-        },
-      },
-    }
-  );
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, getRabbitMQOptions());
   await app.listen();
   Logger.log("Checkout Service listening on RabbitMQ...")
 }
