@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { PAYMENT_QUEUE } from './constants';
+import { PAYMENT_QUEUE } from './shared/constants';
 import { Logger } from '@nestjs/common';
 
 async function bootstrap() {

@@ -1,24 +1,15 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { EXPEDITION_QUEUE, EXPEDITION_SERVICE_RABBITMQ } from './constants';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+
+import { PaymentsModule } from './payments/payments.module';
+import { RabbitMqModule } from './shared/rabbitMQ.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmConfig } from './database/config/typeorm.config';
 
 @Module({
-  imports: [ClientsModule.register([
-    {
-      name: EXPEDITION_SERVICE_RABBITMQ,
-      transport: Transport.RMQ,
-      options: {
-        urls: [process.env.RABBITMQ_URL!],
-        queue: EXPEDITION_QUEUE,
-        queueOptions: {
-          durable: true,
-        },
-      },
-    },
-  ])],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot(typeOrmConfig),
+    RabbitMqModule,
+    PaymentsModule,
+  ],
 })
-export class AppModule {}
+export class AppModule { }
