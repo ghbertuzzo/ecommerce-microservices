@@ -52,10 +52,15 @@ export class PaymentsService {
         const processorType = this.factory.getStrategy(payment.method);
 
         const resultado: PaymentProcessedDto = await processorType.pay();
+        
+        paymentSearch.status = resultado.status;
+        paymentSearch.updatedAt = new Date();
+        await this.paymentRepo.save(paymentSearch);
 
         await this.historyRepo.save({
             payment: paymentSearch,
             status: resultado.status,
+            changedAt: new Date(),
         });
 
         return resultado.status == PaymentStatus.APPROVED ? { success: true } : { success: false, reason: 'Random rejection for simulation' };

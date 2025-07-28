@@ -1,0 +1,28 @@
+import { Controller, Post, Body, Inject } from '@nestjs/common';
+import { CheckoutService } from './checkout.service';
+import { CreateCheckoutDto } from './dtos/create-checkout.dto';
+import { Checkout } from './entities/checkout.entity';
+import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
+import { ORDER_CREATED, PAYMENT_SERVICE_RABBITMQ, PROCESS_PAYMENT } from 'src/shared/constants';
+
+@Controller('checkout')
+export class CheckoutController {
+    constructor(
+        private readonly checkoutService: CheckoutService,
+        @Inject(PAYMENT_SERVICE_RABBITMQ) private readonly paymentRMQClient: ClientProxy,
+    ) { }
+
+    @MessagePattern(ORDER_CREATED)
+    async handleOrderCreated(@Payload() order: any) {
+        const savedCheckout = await this.checkoutService.handleProcessOrder(order);
+
+        const paymentPayload = {
+            id_order: savedCheckout.id,
+            method: order.payment_method,
+            amount: savedCheckout.order_total,
+        };
+
+        console.log('CHECKOUT SERVICE: Send order to payment service: ', paymentPayload);
+        this.paymentRMQClient.emit(PROCESS_PAYMENT, paymentPayload);
+    }
+}

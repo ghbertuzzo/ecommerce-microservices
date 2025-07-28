@@ -5,7 +5,6 @@ CREATE TABLE payments (
     currency VARCHAR(3) NOT NULL DEFAULT 'BRL',
     method VARCHAR(50) NOT NULL,
     status VARCHAR(50) NOT NULL,
-    metadata JSONB,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
