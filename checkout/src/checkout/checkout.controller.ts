@@ -1,7 +1,5 @@
-import { Controller, Post, Body, Inject } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import { CheckoutService } from './checkout.service';
-import { CreateCheckoutDto } from './dtos/create-checkout.dto';
-import { Checkout } from './entities/checkout.entity';
 import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { ORDER_CREATED, PAYMENT_SERVICE_RABBITMQ, PROCESS_PAYMENT } from 'src/shared/constants';
 
@@ -20,6 +18,11 @@ export class CheckoutController {
             id_order: savedCheckout.id,
             method: order.payment_method,
             amount: savedCheckout.order_total,
+            customer_id: order.customer_id,
+            items: order.items,
+            recipientName: order.recipientName,
+            deliveryForecast: order.deliveryForecast,
+            address: order.address,
         };
 
         console.log('CHECKOUT SERVICE: Send order to payment service: ', paymentPayload);

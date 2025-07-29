@@ -1,9 +1,7 @@
-import { Body, Controller, Get, Inject, Param, Patch, Post } from '@nestjs/common';
+import { Controller, Get, Inject, Param } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { EXPEDITION_SERVICE_RABBITMQ, PROCESS_EXPEDITION, PROCESS_PAYMENT } from '../shared/constants';
 import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
-import { CreatePaymentDto } from '../payments/dtos/create-payment.dto'
-import { PaymentStatus } from '../payments/enums/payment-status.enum';
 
 @Controller('payments')
 export class PaymentsController {
@@ -23,9 +21,9 @@ export class PaymentsController {
     }
 
     @MessagePattern(PROCESS_PAYMENT)
-    async handleProcessPayment(@Payload() createPaymentDto: CreatePaymentDto) {
-        const result = await this.paymentsService.handleProcessPayment(createPaymentDto);
-        
+    async handleProcessPayment(@Payload() order: any) {
+        const result = await this.paymentsService.handleProcessPayment(order);
+
         if (!result.success) {
             console.log('PAYMENT SERVICE: Payment rejected: ', result.reason);
             return;
@@ -33,6 +31,21 @@ export class PaymentsController {
         console.log('PAYMENT SERVICE: Payment success:', result);
         console.log('PAYMENT SERVICE: Sending order to expedition service...');
 
-        this.expeditionRMQClient.emit(PROCESS_EXPEDITION, createPaymentDto.id_order);
+        const expeditionPayload = {
+            orderId: order.id_order,
+            customer_id: order.customer_id,
+            recipientName: order.recipientName,
+            deliveryForecast: order.deliveryForecast,
+            address: {
+                street: order.address?.street,
+                number: order.address?.number,
+                complement: order.address?.complement,
+                city: order.address?.city,
+                state: order.address?.state,
+                postalCode: order.address?.postalCode
+            }
+        };
+
+        this.expeditionRMQClient.emit(PROCESS_EXPEDITION, expeditionPayload);
     }
 }

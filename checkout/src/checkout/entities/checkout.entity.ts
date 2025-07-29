@@ -1,4 +1,3 @@
-// checkout.entity.ts
 import {
     Entity,
     PrimaryGeneratedColumn,

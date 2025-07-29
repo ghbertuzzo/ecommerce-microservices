@@ -19,7 +19,6 @@ export class PaymentsService {
 
     async handleProcessPayment(createPaymentDto: CreatePaymentDto) {
         console.log('PAYMENT SERVICE: Received new payment order: ', createPaymentDto);
-
         const payment = await this.savePayment(createPaymentDto);
         return await this.processPayment(payment);
     }
