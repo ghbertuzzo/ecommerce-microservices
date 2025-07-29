@@ -18,6 +18,7 @@ export class ExpeditionController {
 
     @MessagePattern(PROCESS_EXPEDITION)
     async handleProcessExpedition(@Payload() payload: CreateDeliveryDto) {
+        console.log('EXPEDITION SERVICE: Received new expedition order: ', payload);
         const result = await this.expeditionService.handleProcess(payload);
         console.log(result);
     }

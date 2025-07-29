@@ -1,24 +1,14 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { CHECKOUT_QUEUE, CHECKOUT_SERVICE_RABBITMQ } from './constants';
+import { BffController } from './controllers/bff.controller';
+import { CheckoutService } from './services/checkout.service';
+import { PaymentService } from './services/payment.service';
+import { ExpeditionService } from './services/expedition.service';
+import { RabbitMqModule } from './shared/rabbitMQ.module';
+import { BffService } from './services/bff.service';
 
 @Module({
-  imports: [ClientsModule.register([
-    {
-      name: CHECKOUT_SERVICE_RABBITMQ,
-      transport: Transport.RMQ,
-      options: {
-        urls: [process.env.RABBITMQ_URL!],
-        queue: CHECKOUT_QUEUE,
-        queueOptions: {
-          durable: true,
-        },
-      },
-    },
-  ])],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [RabbitMqModule],
+  controllers: [BffController],
+  providers: [BffService, CheckoutService, PaymentService, ExpeditionService],
 })
 export class AppModule {}

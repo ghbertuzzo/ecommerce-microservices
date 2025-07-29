@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
+import { Controller, Get, Inject, Param, ParseUUIDPipe } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { EXPEDITION_SERVICE_RABBITMQ, PROCESS_EXPEDITION, PROCESS_PAYMENT } from '../shared/constants';
 import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
@@ -15,9 +15,9 @@ export class PaymentsController {
         return this.paymentsService.getById(id);
     }
 
-    @Get('order/:id_order')
-    getByOrderId(@Param('id_order') id_order: string) {
-        return this.paymentsService.getByOrderId(id_order);
+    @Get('order/:orderId')
+    getByOrderId(@Param('orderId', new ParseUUIDPipe()) orderId: string) {
+        return this.paymentsService.findByOrderId(orderId);
     }
 
     @MessagePattern(PROCESS_PAYMENT)

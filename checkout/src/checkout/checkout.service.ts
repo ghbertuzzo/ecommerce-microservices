@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Checkout } from './entities/checkout.entity';
@@ -48,5 +48,13 @@ export class CheckoutService {
         });
 
         return this.checkoutRepo.save(checkout);
+    }
+
+    async findByOrderId(orderId: string): Promise<any> {
+        const checkout = await this.checkoutRepo.findOne({ where: { id: orderId } });
+        if (!checkout) {
+            throw new NotFoundException(`Checkout with orderId ${orderId} not found`);
+        }
+        return checkout;
     }
 }

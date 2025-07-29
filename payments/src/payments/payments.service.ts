@@ -76,13 +76,13 @@ export class PaymentsService {
         return payment;
     }
 
-    async getByOrderId(id_order: string): Promise<Payment> {
+    async findByOrderId(orderId: string): Promise<Payment> {
         const payment = await this.paymentRepo.findOne({
-            where: { id_order },
+            where: { id_order: orderId },
             relations: ['statusHistory'],
         });
 
-        if (!payment) throw new NotFoundException(`Payment with order id ${id_order} not found`);
+        if (!payment) throw new NotFoundException(`Payment with order id ${orderId} not found`);
 
         return payment;
     }

@@ -1,4 +1,4 @@
-import { Controller, Inject } from '@nestjs/common';
+import { Controller, Get, Inject, Param, ParseUUIDPipe } from '@nestjs/common';
 import { CheckoutService } from './checkout.service';
 import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { ORDER_CREATED, PAYMENT_SERVICE_RABBITMQ, PROCESS_PAYMENT } from 'src/shared/constants';
@@ -9,6 +9,11 @@ export class CheckoutController {
         private readonly checkoutService: CheckoutService,
         @Inject(PAYMENT_SERVICE_RABBITMQ) private readonly paymentRMQClient: ClientProxy,
     ) { }
+
+    @Get('order/:orderId')
+    async findByOrderId(@Param('orderId', new ParseUUIDPipe()) orderId: string): Promise<any> {
+        return this.checkoutService.findByOrderId(orderId);
+    }
 
     @MessagePattern(ORDER_CREATED)
     async handleOrderCreated(@Payload() order: any) {
