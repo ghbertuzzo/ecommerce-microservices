@@ -17,7 +17,7 @@ Este projeto implementa uma arquitetura de microsserviços com **NestJS**, utili
 1 - Criação de novo pedido
 * O serviço BFF é responsável por receber a requisição de um novo pedido, validar os dados e publicar a mensagem na fila para o serviço de checkout consumir.
 * O serviço de checkout salva as informações relacionadas ao seu contexto e envia os dados restantes, acrescentando o ID do pedido gerado, para a fila do serviço de pagamento.
-* O serviço de pagamento grava os dados no banco, processa o pagamento (de forma randômica: 50% aprovado / 50% rejeitado), atualiza o novo status no banco e, caso aprovado, publica a mensagem para o serviço de expedição. Se rejeitado, nada é publicado na fila de expedição..
+* O serviço de pagamento grava os dados no banco, processa o pagamento (de forma randômica: 50% aprovado / 50% rejeitado), atualiza o novo status no banco e, caso aprovado, publica a mensagem para o serviço de expedição. Se rejeitado, nada é publicado na fila de expedição.
 
 2 - Consulta de pedido
 * O serviço BFF é responsável por buscar os dados do pedido. Para isso, ele realiza chamadas assíncronas aos três serviços (checkout, payment, expedition) e agrega os dados.
@@ -70,7 +70,7 @@ cd ecommerce-microservices
 ```
 ---
 
-### 2. Suba os containers com Docker Compose Passando o .env.dev como parâmetro
+### 2. Suba os containers com Docker Compose passando o .env.dev como parâmetro
 
 
 ```bash
@@ -110,18 +110,78 @@ npm run test
 | PostgreSQL Expedition | [http://localhost:5434](http://localhost:5435)   |
 ---
 
-## Estrutura de Pastas
+## Envio de requisições
 
-```plaintext
-ecommerce-microservices/
-├── bff/
-├── checkout/
-├── payments/
-├── expedition/
-├── docker-compose.yml
-├── .env.dev
-├── .env.prod
-└── README.md
+### 1. Criar novo pedido (via BFF)
+
+- **Método:** `POST`  
+- **URL:** `http://localhost:3000/orders/order`  
+- **Descrição:** Cria um novo pedido e inicia o fluxo entre os microserviços.  
+- **Payload (JSON):**
+
+```json
+{
+  "customer_id": "db308891-5c33-4ef0-a458-b7d9b8ae5b1f",
+  "payment_method": "CREDIT_CARD",
+  "items": [
+    {
+      "product_id": "db308892-5c33-4ef0-a458-b7d9b8ae5b1f",
+      "product_name": "Caipirinha de Limão",
+      "quantity": 2,
+      "unit_price": 18.5
+    },
+    {
+      "product_id": "db308892-5c33-4ef0-a458-b7d9b8ae5b1f",
+      "product_name": "Gin Tônica",
+      "quantity": 1,
+      "unit_price": 25.0
+    }
+  ],
+  "recipientName": "João da Silva",
+  "deliveryForecast": "2025-08-01T15:00:00Z",
+  "address": {
+    "street": "Rua do São Paulo",
+    "number": "123",
+    "complement": "Apto 202",
+    "city": "São Paulo",
+    "state": "SP",
+    "postalCode": "04567-890"
+  }
+}
 ```
 
----
+Ou se preferir via cURL
+
+```bash
+curl -X POST http://localhost:3000/orders/order -H "Content-Type: application/json" -d "{\"customer_id\":\"db308891-5c33-4ef0-a458-b7d9b8ae5b1f\",\"payment_method\":\"CREDIT_CARD\",\"items\":[{\"product_id\":\"db308892-5c33-4ef0-a458-b7d9b8ae5b1f\",\"product_name\":\"Caipirinha de Limão\",\"quantity\":2,\"unit_price\":18.5},{\"product_id\":\"db308892-5c33-4ef0-a458-b7d9b8ae5b1f\",\"product_name\":\"Gin Tônica\",\"quantity\":1,\"unit_price\":25.0}],\"recipientName\":\"João da Silva\",\"deliveryForecast\":\"2025-08-01T15:00:00Z\",\"address\":{\"street\":\"Rua do São Paulo\",\"number\":\"123\",\"complement\":\"Apto 202\",\"city\":\"São Paulo\",\"state\":\"SP\",\"postalCode\":\"04567-890\"}}"
+```
+
+### 2. Consultar dados de um pedido (via BFF)
+
+- **Método:** `GET`  
+- **URL:** `http://localhost:3000/orders/order/:id`  
+- **Descrição:** Retorna os dados agregados do pedido a partir dos três serviços.
+- **Observação:** Substitua :id pelo UUID do pedido.
+
+### Acesso direto aos serviços (consultas individuais)
+
+* Checkout:
+
+- **Método:** `GET`  
+- **URL:** `http://localhost:3001/checkout/order/:id`  
+- **Descrição:** Retorna os dados de checkout do pedido.
+- **Observação:** Substitua :id pelo UUID do pedido.
+
+* Payments:
+
+- **Método:** `GET`  
+- **URL:** `http://localhost:3002/payments/order/:id`  
+- **Descrição:** Retorna os dados de pagamento do pedido.
+- **Observação:** Substitua :id pelo UUID do pedido.
+
+* Expedition:
+
+- **Método:** `GET`  
+- **URL:** `http://localhost:3003/expedition/order/:id`  
+- **Descrição:** Retorna os dados de expedição do pedido.
+- **Observação:** Substitua :id pelo UUID do pedido.
