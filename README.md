@@ -163,25 +163,27 @@ curl -X POST http://localhost:3000/orders/order -H "Content-Type: application/js
 - **Descrição:** Retorna os dados agregados do pedido a partir dos três serviços.
 - **Observação:** Substitua :id pelo UUID do pedido.
 
+---
+
 ### Acesso direto aos serviços (consultas individuais)
 
-* Checkout:
+* **Checkout:**
 
-- **Método:** `GET`  
-- **URL:** `http://localhost:3001/checkout/order/:id`  
-- **Descrição:** Retorna os dados de checkout do pedido.
-- **Observação:** Substitua :id pelo UUID do pedido.
+**Método:** `GET`  
+**URL:** `http://localhost:3001/checkout/order/:id`  
+**Descrição:** Retorna os dados de checkout do pedido.
+**Observação:** Substitua :id pelo UUID do pedido.
 
-* Payments:
+* **Payments:**
 
-- **Método:** `GET`  
-- **URL:** `http://localhost:3002/payments/order/:id`  
-- **Descrição:** Retorna os dados de pagamento do pedido.
-- **Observação:** Substitua :id pelo UUID do pedido.
+**Método:** `GET`  
+**URL:** `http://localhost:3002/payments/order/:id`  
+**Descrição:** Retorna os dados de pagamento do pedido.
+**Observação:** Substitua :id pelo UUID do pedido.
 
-* Expedition:
+* **Expedition:**
 
-- **Método:** `GET`  
-- **URL:** `http://localhost:3003/expedition/order/:id`  
-- **Descrição:** Retorna os dados de expedição do pedido.
-- **Observação:** Substitua :id pelo UUID do pedido.
+**Método:** `GET`  
+**URL:** `http://localhost:3003/expedition/order/:id`  
+**Descrição:** Retorna os dados de expedição do pedido.
+**Observação:** Substitua :id pelo UUID do pedido.
