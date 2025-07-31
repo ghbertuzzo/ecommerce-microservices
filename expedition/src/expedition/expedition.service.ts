@@ -18,7 +18,7 @@ export class ExpeditionService {
         await this.addressRepository.save(address);
 
         const trackingCode = this.generateTrackingCode();
-        
+
         const delivery = this.deliveryRepository.create({
             ...createDto,
             address,
@@ -37,12 +37,31 @@ export class ExpeditionService {
         return await this.deliveryRepository.save(delivery);
     }
 
+    async getById(id: string): Promise<Delivery> {
+        const delivery = await this.deliveryRepository.findOne({
+            where: { id },
+            relations: ['address'],
+        });
+
+        if (!delivery) {
+            throw new NotFoundException(`Delivery with id ${id} not found`);
+        }
+
+        return delivery;
+    }
+
     async findByOrderId(orderId: string): Promise<Delivery> {
         const delivery = await this.deliveryRepository.findOne({ where: { orderId } });
         if (!delivery) {
             throw new NotFoundException(`Delivery with orderId ${orderId} not found`);
         }
         return delivery;
+    }
+
+    async getAll(): Promise<Delivery[]> {
+        return await this.deliveryRepository.find({
+            relations: ['address'],
+        });
     }
 
     private generateTrackingCode(): string {

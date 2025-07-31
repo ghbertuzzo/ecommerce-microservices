@@ -34,4 +34,17 @@ export class BffService {
             expedition: extractValue(expeditionResult, { status: 'erro ao buscar expedição' }),
         };
     }
+
+    async getAllCheckouts() {
+        return this.checkoutService.getAll();
+    }
+    
+    async getAllPayments() {
+        return this.paymentService.getAll();
+    }
+
+    async getAllExpedition() {
+        return this.expeditionService.getAll();
+    }
+
 }

@@ -10,6 +10,21 @@ export class CheckoutController {
         @Inject(PAYMENT_SERVICE_RABBITMQ) private readonly paymentRMQClient: ClientProxy,
     ) { }
 
+    @Get('health')
+    getHealth() {
+        return { status: 'ok' };
+    }
+
+    @Get(':id')
+    getById(@Param('id') id: string) {
+        return this.checkoutService.getById(id);
+    }
+
+    @Get()
+    getAll() {
+        return this.checkoutService.getAll();
+    }
+
     @Get('order/:orderId')
     async findByOrderId(@Param('orderId', new ParseUUIDPipe()) orderId: string): Promise<any> {
         return this.checkoutService.findByOrderId(orderId);

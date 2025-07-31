@@ -51,7 +51,7 @@ export class PaymentsService {
         const processorType = this.factory.getStrategy(payment.method);
 
         const resultado: PaymentProcessedDto = await processorType.pay();
-        
+
         paymentSearch.status = resultado.status;
         paymentSearch.updatedAt = new Date();
         await this.paymentRepo.save(paymentSearch);
@@ -85,6 +85,12 @@ export class PaymentsService {
         if (!payment) throw new NotFoundException(`Payment with order id ${orderId} not found`);
 
         return payment;
+    }
+
+    async getAll(): Promise<Payment[]> {
+        return await this.paymentRepo.find({
+            relations: ['statusHistory'],
+        });
     }
 
 }

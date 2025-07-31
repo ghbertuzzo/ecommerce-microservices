@@ -50,11 +50,30 @@ export class CheckoutService {
         return this.checkoutRepo.save(checkout);
     }
 
+    async getById(id: string): Promise<Checkout> {
+        const checkout = await this.checkoutRepo.findOne({
+            where: { id },
+            relations: ['items'],
+        });
+
+        if (!checkout) {
+            throw new NotFoundException(`Checkout with id ${id} not found`);
+        }
+
+        return checkout;
+    }
+
     async findByOrderId(orderId: string): Promise<any> {
         const checkout = await this.checkoutRepo.findOne({ where: { id: orderId } });
         if (!checkout) {
             throw new NotFoundException(`Checkout with orderId ${orderId} not found`);
         }
         return checkout;
+    }
+
+    async getAll(): Promise<Checkout[]> {
+        return await this.checkoutRepo.find({
+            relations: ['items'],
+        });
     }
 }

@@ -9,4 +9,9 @@ export class ExpeditionService {
         const response = await axios.get(`${this.expeditionUrl}/order/${orderId}`);
         return response.data;
     }
+    
+    async getAll() {
+        const response = await axios.get(this.expeditionUrl);
+        return response.data;
+    }
 }

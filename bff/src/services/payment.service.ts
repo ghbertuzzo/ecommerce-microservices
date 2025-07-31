@@ -9,4 +9,9 @@ export class PaymentService {
         const response = await axios.get(`${this.paymentUrl}/order/${orderId}`);
         return response.data;
     }
+
+    async getAll() {
+        const response = await axios.get(this.paymentUrl);
+        return response.data;
+    }
 }

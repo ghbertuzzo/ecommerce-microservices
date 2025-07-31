@@ -9,4 +9,9 @@ export class CheckoutService {
         const response = await axios.get(`${this.checkoutUrl}/order/${orderId}`);
         return response.data;
     }
+
+    async getAll() {
+        const response = await axios.get(this.checkoutUrl);
+        return response.data;
+    }
 }

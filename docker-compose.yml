@@ -100,13 +100,10 @@ services:
     depends_on:
       checkout:
         condition: service_started
-        required: true
       expedition:
         condition: service_started
-        required: true
       payments:
         condition: service_started
-        required: true
     env_file:
       - .env.dev
     environment:

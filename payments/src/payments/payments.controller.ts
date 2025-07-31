@@ -10,9 +10,19 @@ export class PaymentsController {
         @Inject(EXPEDITION_SERVICE_RABBITMQ) private readonly expeditionRMQClient: ClientProxy,
     ) { }
 
+    @Get('health')
+    getHealth() {
+        return { status: 'ok' };
+    }
+
     @Get(':id')
     getById(@Param('id') id: string) {
         return this.paymentsService.getById(id);
+    }
+
+    @Get()
+    getAll() {
+        return this.paymentsService.getAll();
     }
 
     @Get('order/:orderId')

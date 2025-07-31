@@ -14,11 +14,26 @@ export class BffController {
     @Post("order")
     async createOrder(@Body() order: CreateOrderDto) {
         this.client.emit(ORDER_CREATED, order);
-        return { message: "Order sent to RabbitMQ Checkout", order };
+        return { message: "Order sent to RabbitMQ Checkout" };
     }
 
     @Get('order/:orderId')
     async getOrderDetails(@Param('orderId') orderId: string) {
         return this.bffService.getOrderDetails(orderId);
+    }
+
+    @Get('checkout')
+    async getAllCheckouts() {
+        return this.bffService.getAllCheckouts();
+    }
+    
+    @Get('payments')
+    async getAllPayments() {
+        return this.bffService.getAllPayments();
+    }
+
+    @Get('expedition')
+    async getAllExpedition() {
+        return this.bffService.getAllExpedition();
     }
 }

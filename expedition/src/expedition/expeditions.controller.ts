@@ -11,6 +11,21 @@ export class ExpeditionController {
         private readonly expeditionService: ExpeditionService,
     ) { }
 
+    @Get('health')
+    getHealth() {
+        return { status: 'ok' };
+    }
+
+    @Get(':id')
+    async getById(@Param('id') id: string) {
+        return this.expeditionService.getById(id);
+    }
+
+    @Get()
+    async getAll() {
+        return this.expeditionService.getAll();
+    }
+
     @Get('order/:orderId')
     async findByOrderId(@Param('orderId', new ParseUUIDPipe()) orderId: string): Promise<Delivery> {
         return this.expeditionService.findByOrderId(orderId);
