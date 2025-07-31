@@ -98,19 +98,30 @@ npm run test
 
 ## Acessos locais
 
-| Serviço               | URL                                              |
-| --------------------- | ------------------------------------------------ |
-| BFF                   | [http://localhost:3000](http://localhost:3000)   |
-| Checkout              | [http://localhost:3001](http://localhost:3001)   |
-| Payments              | [http://localhost:3002](http://localhost:3002)   |
-| Expedition            | [http://localhost:3003](http://localhost:3003)   |
-| RabbitMQ UI           | [http://localhost:15672](http://localhost:15672) |
-| PostgreSQL Checkout   | [http://localhost:5433](http://localhost:5433)   |
-| PostgreSQL Payments   | [http://localhost:5434](http://localhost:5434)   |
-| PostgreSQL Expedition | [http://localhost:5434](http://localhost:5435)   |
+| Serviço               | URL                                                    |
+| --------------------- | ------------------------------------------------------ |
+| BFF                   | [http://localhost:3000](http://localhost:3000)         |
+| BFF-Swagger           | [http://localhost:3000/api](http://localhost:3000/api) |
+| Checkout              | [http://localhost:3001](http://localhost:3001)         |
+| Payments              | [http://localhost:3002](http://localhost:3002)         |
+| Expedition            | [http://localhost:3003](http://localhost:3003)         |
+| RabbitMQ UI           | [http://localhost:15672](http://localhost:15672)       |
+| PostgreSQL Checkout   | [http://localhost:5433](http://localhost:5433)         |
+| PostgreSQL Payments   | [http://localhost:5434](http://localhost:5434)         |
+| PostgreSQL Expedition | [http://localhost:5435](http://localhost:5435)         |
 ---
 
-## Envio de requisições
+## Documentação e Envio de requisições
+
+Este projeto utiliza o [**Swagger**](https://swagger.io/) para documentar e testar os endpoints da API BFF de forma interativa.
+
+Após iniciar a aplicação, acesse a URL abaixo no navegador:
+[http://localhost:3000/api](http://localhost:3000/api)
+
+Nessa interface você pode:
+- Visualizar todos os endpoints disponíveis.
+- Conferir exemplos de payloads de entrada e saída.
+- Realizar requisições diretamente pela interface web.
 
 ### 1. Criar novo pedido (via BFF)
 
@@ -150,7 +161,7 @@ npm run test
 }
 ```
 
-Ou se preferir via cURL
+Via cURL
 
 ```bash
 curl -X POST http://localhost:3000/orders/order -H "Content-Type: application/json" -d "{\"customer_id\":\"db308891-5c33-4ef0-a458-b7d9b8ae5b1f\",\"payment_method\":\"CREDIT_CARD\",\"items\":[{\"product_id\":\"db308892-5c33-4ef0-a458-b7d9b8ae5b1f\",\"product_name\":\"Caipirinha de Limão\",\"quantity\":2,\"unit_price\":18.5},{\"product_id\":\"db308892-5c33-4ef0-a458-b7d9b8ae5b1f\",\"product_name\":\"Gin Tônica\",\"quantity\":1,\"unit_price\":25.0}],\"recipientName\":\"João da Silva\",\"deliveryForecast\":\"2025-08-01T15:00:00Z\",\"address\":{\"street\":\"Rua do São Paulo\",\"number\":\"123\",\"complement\":\"Apto 202\",\"city\":\"São Paulo\",\"state\":\"SP\",\"postalCode\":\"04567-890\"}}"
@@ -163,6 +174,24 @@ curl -X POST http://localhost:3000/orders/order -H "Content-Type: application/js
 - **Descrição:** Retorna os dados agregados do pedido a partir dos três serviços.
 - **Observação:** Substitua :id pelo UUID do pedido.
 
+### 3. Listar todos os checkouts (via BFF)
+
+- **Método:** `GET`  
+- **URL:** `http://localhost:3000/orders/checkout`  
+- **Descrição:** Lista todos os pedidos de checkout processados no sistema.
+
+### 4. Listar todos os pagamentos (via BFF)
+
+- **Método:** `GET`  
+- **URL:** `http://localhost:3000/orders/payments`  
+- **Descrição:** Lista todos os pagamentos processados no sistema.
+
+### 5. Listar todos as expedições (via BFF)
+
+- **Método:** `GET`  
+- **URL:** `http://localhost:3000/orders/expedition`  
+- **Descrição:** Lista todas as expedições processados no sistema.
+  
 ---
 
 ### Acesso direto aos serviços (consultas individuais)
