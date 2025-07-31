@@ -79,6 +79,12 @@ docker-compose --env-file .env.dev up --build -d
 Você também pode configurar um `.env.prod` para produção. 
 Obs: Os arquivos .env não estão no gitignore somente para demonstração e facilitar a subida do ambiente.
 
+### 3. Finalizar os containers com Docker Compose down 
+Obs: Se você passar o parâmetro -v ele remove os dados persistidos nos volumes, ou seja da próxima vez que subir, ele vai criar com as tabelas zeradas
+```bash
+docker compose down -v
+```
+
 ---
 
 ## Testes
